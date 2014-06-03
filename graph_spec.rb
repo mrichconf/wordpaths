@@ -16,8 +16,23 @@ end
 
 describe Graph, "#neighbors" do
   it "returns the list of vertices that share an edge with the given vertex" do
-    graph = Graph.new({ "food" => { "fool" => 1, "pool" => 1}, "pool" => { "food" => 1, "fool" => 1 }, "food" => { "fool" => 1, "pool" => 1, "ford" => 1 } })
-    graph.neighbors("food").should match_array(["fool", "pool", "ford"])
+    graph_data = {
+      "food" => {
+        "fool" => 1,
+        "wood" => 1,
+        "ford" => 1
+      },
+      "pool" => {
+        "food" => 1,
+        "fool" => 1
+      },
+      "wood" => {
+        "wool" => 1,
+        "food" => 1
+      }
+    }
+    graph = Graph.new(graph_data)
+    graph.neighbors("food").should match_array(["fool", "wood", "ford"])
     graph.neighbors("pool").should match_array(["fool", "food"])
   end
   it "raises an exception of the given vertex doesn't exist" do

@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require './bfs.rb'
+require './graphbuilder_dynamic.rb'
+
+begin
+
+  startword = ARGV[0]
+  raise ArgumentError, "Missing start-word" unless startword
+
+  endword = ARGV[1]
+  raise ArgumentError, "Missing start-word" unless startword
+
+  dictionary_file = ARGV[2] ? ARGV[2] : '/usr/share/dict/words'
+  raise ArgumentError, "Failed to open dictionary file: '#{dictionary_file}' does not exist" unless File.exists?(dictionary_file) 
+
+rescue ArgumentError => e
+  print "Usage: wordpath start-word end-word [ dictionary-file-path ]\n"
+  print "#{e}\n"
+  exit
+end
+
+@words = {}
+
+File.open(dictionary_file, "r") do |f1|
+  while line = f1.gets
+    word = line.strip
+    if word.length == startword.length
+      @words[word] = nil
+    end
+  end
+end
+
+graph = Graph.new(@words, GraphBuilderDynamic.new)
+bfs = BFS.new(graph)
+
+begin
+  print bfs.search(startword, endword).join(' -> ')
+rescue SearchFailed => e
+  print "#{e}\n"
+end

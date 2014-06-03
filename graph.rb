@@ -4,10 +4,13 @@ class AddEdgeGraphError < StandardError
 end
 
 class Graph
+  attr_accessor :vertices
 
-  def initialize(verts = {})
+  def initialize(verts = {}, builder = nil)
+    @graphbuilder = builder
     @vertices = Hash.new
     @vertices.merge!(verts) if verts
+    @graphbuilder.build(self) if @graphbuilder
   end
 
   def [](name)
@@ -15,8 +18,9 @@ class Graph
     @vertices[name]
   end
 
-  def neighbors(v)
+  def neighbors(v, exclude = {})
     raise UnknownVertexGraphError, "neighbors(): v #{v} cannot be found in the vertices list" if !@vertices.has_key?(v)
+    @graphbuilder.findNeighbors(v, exclude) if @vertices[v] == nil and @graphbuilder
     @vertices[v].keys
   end
 
